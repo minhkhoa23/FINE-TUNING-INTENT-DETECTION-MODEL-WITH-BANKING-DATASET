@@ -187,17 +187,13 @@ def main():
 
     if args.create_val:
         print("Đang tách validation từ train...")
-        VAL_SIZE = 2000
-
-        if len(train_df) < VAL_SIZE:
-            raise ValueError(f"Train set nhỏ hơn {VAL_SIZE} mẫu!")
 
         train_split, val_split = train_test_split(
-            train_df,
-            test_size=VAL_SIZE,
-            random_state=args.random_state,
-            stratify=train_df["label_id"],
-        )
+        train_df,
+        test_size=0.1,
+        random_state=args.random_state,
+        stratify=train_df["label_id"],
+        )   
 
         train_split = train_split.reset_index(drop=True)
         val_split = val_split.reset_index(drop=True)
