@@ -1,6 +1,6 @@
-torch>=2.1.0
-transformers==4.41.2
-accelerate==0.29.3
+torch
+transformers==4.51.3
+accelerate==0.34.2
 trl==0.8.6
 
 unsloth
@@ -13,7 +13,6 @@ datasets==2.19.0
 
 tqdm==4.66.4
 pyyaml==6.0.1
-regex==2024.5.15
-
+regex
 sentencepiece==0.2.0
 einops==0.8.0
