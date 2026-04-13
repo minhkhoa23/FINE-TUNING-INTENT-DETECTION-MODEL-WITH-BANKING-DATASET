@@ -30,11 +30,12 @@ def load_csv(path: str) -> pd.DataFrame:
         raise FileNotFoundError(f"Không tìm thấy file: {path}")
     df = pd.read_csv(path)
 
-    required_cols = {"text", "label"}
+    required_cols = {"text", "category"}
     missing = required_cols - set(df.columns)
     if missing:
         raise ValueError(f"File {path} thiếu cột bắt buộc: {missing}")
 
+    df = df.rename(columns={"category": "label"})
     df = df[["text", "label"]].copy()
     return df
 
@@ -197,7 +198,7 @@ def main():
             random_state=args.random_state,
             stratify=train_df["label_id"],
         )
-        
+
         train_split = train_split.reset_index(drop=True)
         val_split = val_split.reset_index(drop=True)
     else:
