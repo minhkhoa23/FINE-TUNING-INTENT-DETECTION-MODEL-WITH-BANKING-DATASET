@@ -70,6 +70,7 @@ class IntentClassification:
             model_name=self.model_dir,
             max_seq_length=self.max_seq_length,
             load_in_4bit=self.load_in_4bit,
+            local_files_only=True,
         )
         FastLanguageModel.for_inference(self.model)
 
