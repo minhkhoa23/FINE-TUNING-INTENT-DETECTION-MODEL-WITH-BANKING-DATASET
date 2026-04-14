@@ -6,7 +6,25 @@ from typing import Optional, List, Dict
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from yaml import parser
 
+def sample_fraction(df: pd.DataFrame, fraction: float, random_state: int) -> pd.DataFrame:
+    """
+    Lấy một phần dữ liệu theo tỉ lệ, giữ phân bố label bằng stratify.
+    """
+    if fraction is None or fraction >= 1.0:
+        return df.copy()
+
+    if fraction <= 0 or fraction > 1:
+        raise ValueError("fraction phải nằm trong khoảng (0, 1].")
+
+    sampled_df, _ = train_test_split(
+        df,
+        train_size=fraction,
+        random_state=random_state,
+        stratify=df["label"],
+    )
+    return sampled_df.reset_index(drop=True)
 
 def normalize_text(text: str, lowercase: bool = True) -> str:
     """
@@ -140,6 +158,11 @@ def main():
                         help="Chuyển text về lowercase")
     parser.add_argument("--random_state", type=int, default=42)
 
+    parser.add_argument("--train_fraction", type=float, default=1.0,
+                        help="Tỉ lệ dữ liệu train muốn giữ lại. Ví dụ 0.5")
+    parser.add_argument("--test_fraction", type=float, default=1.0,
+                        help="Tỉ lệ dữ liệu test muốn giữ lại. Ví dụ 0.5")
+
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -162,6 +185,13 @@ def main():
         num_labels=args.num_labels,
         label_list=label_list,
     )
+
+    print("Đang lấy subset theo tỉ lệ train/test...")
+    train_df = sample_fraction(train_df, args.train_fraction, args.random_state)
+    test_df = sample_fraction(test_df, args.test_fraction, args.random_state)
+
+    print(f"Train sau khi lấy {args.train_fraction*100:.0f}%: {train_df.shape}")
+    print(f"Test sau khi lấy {args.test_fraction*100:.0f}% : {test_df.shape}")
 
     print(f"Số label được chọn: {len(selected_labels)}")
     print("Danh sách label:")
@@ -190,7 +220,7 @@ def main():
 
         train_split, val_split = train_test_split(
         train_df,
-        test_size=0.1,
+        test_size=args.val_size,
         random_state=args.random_state,
         stratify=train_df["label_id"],
         )   
