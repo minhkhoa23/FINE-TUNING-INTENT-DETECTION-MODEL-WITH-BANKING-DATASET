@@ -7,7 +7,7 @@ from difflib import get_close_matches
 from typing import Dict, List, Any
 
 import torch
-from unsloth import FastVisionModel
+from unsloth import FastLanguageModel
 
 
 SYSTEM_PROMPT = (
@@ -66,13 +66,12 @@ class IntentClassification:
         self.valid_labels: List[str] = list(self.id2label.values())
         self.valid_labels_normalized = [normalize_label_text(x) for x in self.valid_labels]
 
-        self.model, self.tokenizer = FastVisionModel.from_pretrained(
+        self.model, self.tokenizer = FastLanguageModel.from_pretrained(
             model_name=self.model_dir,
             max_seq_length=self.max_seq_length,
             load_in_4bit=self.load_in_4bit,
         )
-
-        FastVisionModel.for_inference(self.model)
+        FastLanguageModel.for_inference(self.model)
 
         if not hasattr(self.tokenizer, "apply_chat_template"):
             raise RuntimeError(

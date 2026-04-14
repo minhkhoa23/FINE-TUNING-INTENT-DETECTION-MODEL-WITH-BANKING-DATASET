@@ -1,10 +1,11 @@
-model_name: "unsloth/gemma-4-e2b-it"
+model_name: "Qwen/Qwen3-4B-Instruct-2507"
+
 train_path: "sample_data/processed/train.csv"
 val_path: "sample_data/processed/val.csv"
 test_path: "sample_data/processed/test.csv"
 id2label_path: "sample_data/processed/id2label.json"
 
-output_dir: "outputs/gemma4_e2b_lora"
+output_dir: "outputs/qwen3_4b_instruct_lora"
 
 seed: 42
 random_state: 42
@@ -12,14 +13,14 @@ random_state: 42
 max_seq_length: 512
 load_in_4bit: true
 
-per_device_train_batch_size: 2
-per_device_eval_batch_size: 2
-gradient_accumulation_steps: 4
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 8
 
 learning_rate: 0.0002
 weight_decay: 0.01
 warmup_ratio: 0.03
-num_train_epochs: 3
+num_train_epochs: 2
 lr_scheduler_type: "cosine"
 optim: "adamw_8bit"
 

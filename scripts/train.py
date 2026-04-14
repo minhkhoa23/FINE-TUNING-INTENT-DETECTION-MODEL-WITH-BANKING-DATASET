@@ -11,7 +11,7 @@ import torch
 import pandas as pd
 from datasets import Dataset
 
-from unsloth import FastVisionModel, is_bf16_supported
+from unsloth import FastLanguageModel, is_bf16_supported
 from trl import SFTTrainer, SFTConfig
 
 
@@ -191,7 +191,7 @@ def main():
     print(f"Num labels: {len(label_set)}")
 
     print("Loading Gemma 4 E2B with Unsloth...")
-    model, tokenizer = FastVisionModel.from_pretrained(
+    model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=model_name,
         max_seq_length=max_seq_length,
         load_in_4bit=load_in_4bit,
@@ -201,13 +201,13 @@ def main():
     tokenizer = maybe_prepare_chat_template(tokenizer)
 
     # E2B/E4B nên khởi đầu bằng text-focused LoRA, không fine-tune vision layers
-    model = FastVisionModel.get_peft_model(
+    model = FastLanguageModel.get_peft_model(
         model,
-        finetune_vision_layers=False,
-        finetune_language_layers=True,
-        finetune_attention_modules=True,
-        finetune_mlp_modules=True,
         r=lora_r,
+        target_modules=[
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj",
+        ],
         lora_alpha=lora_alpha,
         lora_dropout=lora_dropout,
         bias="none",
@@ -215,7 +215,7 @@ def main():
         random_state=random_state,
     )
 
-    FastVisionModel.for_training(model)
+    FastLanguageModel.for_training(model)
 
     print("Converting CSV to chat-format dataset...")
     train_ds = build_hf_dataset(train_df)
