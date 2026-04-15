@@ -108,7 +108,7 @@ def maybe_prepare_chat_template(tokenizer):
     if not hasattr(tokenizer, "apply_chat_template"):
         raise RuntimeError(
             "Tokenizer does not support apply_chat_template. "
-            "Please update transformers / unsloth and verify the Gemma 4 tokenizer."
+            "Please update transformers / unsloth and verify tokenizer."
         )
     return tokenizer
 
@@ -148,8 +148,8 @@ def main():
     test_path = cfg.get("test_path")
     id2label_path = cfg.get("id2label_path")
 
-    model_name = cfg.get("model_name", "unsloth/gemma-4-e2b-it")
-    output_dir = cfg.get("output_dir", "outputs/gemma4_e2b_lora")
+    model_name = cfg.get("model_name")
+    output_dir = cfg.get("output_dir")
     os.makedirs(output_dir, exist_ok=True)
 
     max_seq_length = int(cfg.get("max_seq_length", 512))
@@ -190,7 +190,7 @@ def main():
     print(f"Test size : {len(test_df) if test_df is not None else 0}")
     print(f"Num labels: {len(label_set)}")
 
-    print("Loading Gemma 4 E2B with Unsloth...")
+    print("Loading Model with Unsloth...")
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=model_name,
         max_seq_length=max_seq_length,
